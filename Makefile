@@ -1,21 +1,24 @@
 CC=gcc
 OBJF=./obj
 CFLAGS=-g
+MKDIR_P = mkdir -p
 
-_OBJS=tcpd.o timer.o ftpc.o ftps.o libvt_pm.o
+_OBJS=tcpd.o timer.o ftp_client.o ftp_server.o lib_tcp.o
 OBJS=$(patsubst %,$(OBJF)/%,$(_OBJS))
 
 
-all : ftpc ftps tcpd timer
+all : obj_dir ftp_client ftp_server tcpd timer
+
+obj_dir:
+	${MKDIR_P} obj/	 
 
 $(OBJF)/%.o : %.c $(DEPS)
 	$(CC) $(CFLAGS) -o $@ -c $<
 
-
-ftpc : obj/libvt_pm.o obj/ftpc.o
+ftp_client : obj/lib_tcp.o obj/ftp_client.o
 	$(CC) $(CFLAGS) -o $@ $^
 
-ftps : obj/libvt_pm.o obj/ftps.o
+ftp_server : obj/lib_tcp.o obj/ftp_server.o
 	$(CC) $(CFLAGS) -o $@ $^
 
 tcpd : obj/tcpd.o
@@ -27,4 +30,5 @@ timer : obj/timer.o
 .PHONY : clean
 
 clean:
-	rm timer ftpc ftps tcpd -f $(OBJS)
+	rm timer ftp_client ftp_server tcpd -f $(OBJS)
+	rm -r obj/
